@@ -17,13 +17,17 @@ from src.utils import save_object
 # Un archivo .pkl es un archivo de objeto serializado creado con el módulo pickle de Python.\ 
 # Es convertir un objeto (como un modelo, un DataFrame, una lista, etc.)\
 #  en una secuencia de bytes que puede almacenarse en disco o transmitirse.
+
+# Especifica la ruta donde se guardará el objeto de preprocesamiento (ColumnTransformer) serializado
 class DataTransformationConfig:
     preprocessor_obj_file_path = os.path.join('artifacts','preprocessor.pkl')
 
+# clase principal que gestiona la transformación de datos
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
+    # Construye y devuelve ColumnTransformer que encapsula dos pipelines:
     def get_data_transformer_object(self):
         try:
             # Columnas numéricas a escalar
@@ -56,7 +60,7 @@ class DataTransformation:
             logging.info(f'Columnas categóricas: {categorical_columns}')
             logging.info(f'Columnas numéricas: {numerical_columns}')
 
-            # Combina ambos pipelines en un ColumnTransformer
+            # Combina ambos pipelines en ColumnTransformer
             preprocessor = ColumnTransformer(
                 [
                     ('num_pipeline', num_pipeline, numerical_columns),
@@ -71,6 +75,7 @@ class DataTransformation:
         except Exception as e:
             raise CustomException(e,sys) # Eleva error con contexto del sistema
 
+    # Aplica el objeto de transformación a los datos
     def initiative_data_transformation(self, train_path, test_path):
         try:
             train_df = pd.read_csv(train_path) # cargar los conjuntos de train y test 
